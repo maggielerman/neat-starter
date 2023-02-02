@@ -1,9 +1,8 @@
 <div class="{{ 'lg:fixed' if path == 'home' }} w-full">
     <nav class="flex items-center justify-center lg:justify-between flex-wrap p-6 lg:px-0 container mx-auto" x-data="{ isOpen: false }" @keydown.escape="isOpen = false"  @click.away="isOpen = false">
         <!--Logo etc-->
-        <div class="flex items-center">
-            <a href="/" class="text-indigo-500 font-bold text-lg">
-                Logo</a>
+        <div style="max-width: 200px;" class="flex items-center  ">
+            {% image "src/static/img/ez-breathe-logo.png", "ez-breathe-logo", '50vw, 100vw', 'dynamic-images lazyloaded rounded-lg' %}
         </div>
 
         <!--Toggle button (hidden on large screens)-->

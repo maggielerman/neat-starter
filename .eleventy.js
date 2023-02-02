@@ -2,6 +2,49 @@ const yaml = require("js-yaml");
 const { DateTime } = require("luxon");
 const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const htmlmin = require("html-minifier");
+const Image = require("@11ty/eleventy-img");
+
+async function pngShortcode(src, alt, sizes, cls) {
+  let metadata = await Image(src, {
+    widths: [400, 800, 1200, 1600, null],
+    formats: ["webp", "avif", null],
+    urlPath: "/static/img/responsive",
+    outputDir: "_site/static/img/responsive",
+    useCache: true,
+  });
+
+  let imageAttributes = {
+    alt,
+    class: cls,
+    sizes,
+    loading: "lazy",
+    decoding: "async",
+  };
+
+  // You bet we throw an error on missing alt in `imageAttributes` (alt="" works okay)
+  return Image.generateHTML(metadata, imageAttributes);
+}
+
+
+async function imageShortcode(src, alt, sizes, cls, style) {
+  let metadata = await Image(src, {
+    widths: [ 800, 1200],
+    formats: ["jpeg", "webp", "png", "avif"],
+    urlPath: "/static/img/responsive",
+    outputDir: "_site/static/img/responsive",
+   
+  });
+
+  let imageAttributes = {
+    alt,
+    class: cls,
+    style,
+    sizes,
+    loading: "lazy",
+    decoding: "async",
+  };
+  return Image.generateHTML(metadata, imageAttributes);
+}
 
 module.exports = function (eleventyConfig) {
   // Disable automatic use of your .gitignore
@@ -34,6 +77,15 @@ module.exports = function (eleventyConfig) {
 
   // Copy Image Folder to /_site
   eleventyConfig.addPassthroughCopy("./src/static/img");
+
+   //image shortcodes
+   eleventyConfig.addNunjucksAsyncShortcode("png", pngShortcode);
+   eleventyConfig.addLiquidShortcode("png", pngShortcode);
+   eleventyConfig.addJavaScriptFunction("png", pngShortcode);
+ 
+   eleventyConfig.addNunjucksAsyncShortcode("image", imageShortcode);
+   eleventyConfig.addLiquidShortcode("image", imageShortcode);
+   eleventyConfig.addJavaScriptFunction("image", imageShortcode);
 
   // Copy favicon to route of /_site
   eleventyConfig.addPassthroughCopy("./src/favicon.ico");
